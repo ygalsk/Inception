@@ -5,11 +5,13 @@ services:
     build: ./nginx/.
     container_name: nginx
     ports:
-      - "80:80"
+      - "443:443"
     volumes:
       - ./web:/var/www/html
     networks:
       inception:
+    env_file:
+      - .env
   wordpress:
     build: ./wordpress/.
     container_name: wp-php
@@ -17,11 +19,15 @@ services:
       - ./web:/var/www/html
     networks:
       inception:
+    env_file:
+      - .env
   mariadb:
     build: ./mariadb/.
     container_name: mariadb
     command: ["mysqld"]
     networks:
       inception:
+    env_file:
+      - .env
 networks:
   inception:
