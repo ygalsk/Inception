@@ -3,7 +3,7 @@
 #
 server {
     # SSL configuration
-    server_name dkremer.42.fr www.dkremer.42.fr;
+    server_name dkremer.42.fr;
 
     listen 443 ssl default_server;
     listen [::]:443 ssl default_server;
@@ -40,10 +40,13 @@ server {
     }
 
     # Pass PHP scripts to FastCGI server
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass wp-php:9000;  # Adjust for your PHP-FPM setup
-    }
+location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass wp-php:9000;  # The PHP container should be named wp-php and listening on port 9000
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+
 
     # Deny access to .htaccess files, if Apache's document root
     # concurs with nginx's one
@@ -56,7 +59,7 @@ server {
 # Optional: Redirect HTTP to HTTPS
 server {
     listen 80;
-    server_name dkremer.42.fr www.dkremer.42.fr;
+    server_name dkremer.42.fr;
 
     location / {
         return 301 https://$host$request_uri;

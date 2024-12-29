@@ -9,25 +9,37 @@ services:
     volumes:
       - ./web:/var/www/html
     networks:
-      inception:
-    env_file:
-      - .env
+      - inception
+
   wordpress:
     build: ./wordpress/.
     container_name: wp-php
     volumes:
-      - ./web:/var/www/html
+      - wordpress_data:/var/www/html  # Persist WordPress files
+      - wordpress_content:/var/www/html/wp-content  # Persist wp-content
     networks:
-      inception:
+      - inception
     env_file:
       - .env
+
   mariadb:
     build: ./mariadb/.
     container_name: mariadb
+    ports:
+      - "3306:3306"
     command: ["mysqld"]
+    volumes:
+      - mariadb_data:/var/lib/mysql  # Persist database
     networks:
-      inception:
+      - inception
     env_file:
       - .env
+
 networks:
   inception:
+    driver: bridge
+
+volumes:
+  wordpress_data:   # Define the volume for WordPress files
+  wordpress_content: # Define the volume for wp-content
+  mariadb_data:     # Define the volume for MariaDB data
